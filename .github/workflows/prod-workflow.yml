@@ -49,11 +49,22 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Retrieve publish profile for deployment
+        id: publishProfileRetrieval
+        run: |
+          publishProfiles=$(az webapp deployment list-publishing-profiles \
+            --name "AuthenticationMicroservice" \
+            --resource-group "final-common-group" \
+            --subscription "44b67705-3aeb-4405-8dcd-b8fba9fa2c3b" --xml)
+          echo "::add-mask::$publishProfiles"
+          echo "::set-output name=publishProfiles::$publishProfiles"
+
       - name: Deploy to App Service
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'MongoRepositoryService'
           images: 'mongorepositorycd.azurecr.io/mongorepository-cd:${{ github.sha }}'
+          publish-profile: ${{ steps.publishProfileRetrieval.outputs.publishProfiles }}
 
       - name: Azure logout
         run: |
