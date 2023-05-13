@@ -39,7 +39,7 @@ app = FastAPI()
 
 @app.get("/")
 def index():
-    return {"data": "MongoRepository service ran successfully -version 0.0.1"}
+    return {"data": "MongoRepository service ran successfully -version 0.0.2"}
 
 
 @app.post("/mongo")
