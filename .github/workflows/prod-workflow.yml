@@ -53,7 +53,7 @@ jobs:
         id: publishProfileRetrieval
         run: |
           publishProfiles=$(az webapp deployment list-publishing-profiles \
-            --name "AuthenticationMicroservice" \
+            --name "MongoRepositoryService" \
             --resource-group "final-common-group" \
             --subscription "44b67705-3aeb-4405-8dcd-b8fba9fa2c3b" --xml)
           echo "::add-mask::$publishProfiles"
