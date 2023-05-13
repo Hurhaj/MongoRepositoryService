@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+fastapi = "*"
+uvicorn = "*"
+pymongo = "*"
+"srtm.py" = "*"
+"typing-extensions" = "*"
+pydantic = "*"
+jwt = "*"
+datetime = "*"
+google-auth = "*"
+[dev-packages]
+
+[requires]
+python_version = "3.9"
