@@ -61,7 +61,7 @@ app = FastAPI()
 
 @app.get("/")
 def index():
-    return {"data": "MongoRepository service ran successfully -version 0.0.2"}
+    return {"data": "MongoRepository service ran successfully -version 0.0.44"}
 
 
 @app.post("/syncreq")
@@ -81,7 +81,7 @@ async def syncreq(lis : List[SynchronizationRequest]):
 
 
 @app.post("/newactivities")
-async def newactivities(newac: List[Activity], token: str):
+async def newactivities(newac: List[Activity]):
     elevations = []
     for e in newac:
         newA = await getElevation(e.data)
