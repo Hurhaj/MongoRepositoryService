@@ -3,7 +3,7 @@ from typing import List
 
 import uvicorn
 from fastapi import FastAPI
-from pydantic import BaseModel
+from pydantic import BaseModel, parse_obj_as
 from pymongo import MongoClient
 import requests as req
 
@@ -63,12 +63,13 @@ app = FastAPI()
 
 @app.get("/")
 def index():
-    return {"data": "MongoRepository service ran successfully -version 0.0.48"}
+    return {"data": "MongoRepository service ran successfully -version 0.0.49"}
 
 
 @app.post("/syncreq")
 async def syncreq(lis : List[SynchronizationRequest]):
     docs = await returnAllUsersDocuments(lis[0].user)
+    print(docs)
     diffsend = []
     diffneed = []
     for doc in docs:
@@ -132,9 +133,17 @@ async def returnAllUsersDocuments(user: str):
     filters = {"user": user}
     try:
         documents = db["users"].find(filters)
-        return documents
+        docs = []
+        for doc in documents:
+            docs.append(doc)
+        activitites = []
+        for ds in docs:
+            activity = Activity.parse_obj(ds)
+            activitites.append(activity)
+        #activity_list = parse_obj_as(List[Activity], documents)
+        return activitites
     except Exception as e:
-        return "error"
+        return e
 
 
 async def writeAll(activitys: List[Activity]):
