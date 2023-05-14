@@ -71,7 +71,7 @@ app = FastAPI()
 
 @app.get("/")
 def index():
-    return {"data": "MongoRepository service ran successfully -version 0.0.45"}
+    return {"data": "MongoRepository service ran successfully -version 0.0.46"}
 
 
 @app.post("/syncreq")
