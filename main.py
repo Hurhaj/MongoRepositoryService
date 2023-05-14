@@ -12,6 +12,8 @@ class Location(BaseModel):
     latitude: float
     longitude: float
 
+    def to_dict(self):
+        return self.dict()
 
 class RoutePoints(BaseModel):
     latitude: float
@@ -85,6 +87,7 @@ async def newactivities(newac: List[Activity]):
     elevations = []
     for e in newac:
         newA = await getElevation(e.data)
+        print(newA)
         e.data = newA
         el = []
         for i in newA:
@@ -151,23 +154,27 @@ async def delete(ID : str):
     except Exception as e:
         return "error"
 async def getElevation(lis:List[RoutePoints]):
+    lys: List[RoutePoints]
+    lys= lis
     locations = []
     for li in lis:
         locations.append(Location(latitude=li.latitude,longitude=li.longitude))
     try:
-        ans = req.post(elevation_api, data=locations)
+        my_json = json.dumps([obj.dict() for obj in locations])
+        ans = req.post(elevation_api, data=my_json)
     except Exception as e:
         print(e)
     content = ans.text
+    print(content)
     try:
         obj = json.loads(content)
-        if obj.error:
-            return "error"
-        else:
-            for ob in obj:
-                lis.altitude = ob
-            return lis
+        print(obj)
+        elevations = obj["eleva"]
+        for elevation, point in zip(elevations, lys):
+            point.altitude = elevation
+        print(lys)
+        return lys
     except Exception as e:
-        return "error"
+        return e
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
