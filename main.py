@@ -1,11 +1,11 @@
 import json
 from typing import List
 
+import requests as req
 import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel
 from pymongo import MongoClient
-import requests as req
 
 
 class Location(BaseModel):
@@ -32,23 +32,33 @@ class Activity(BaseModel):
 
     def to_dict(self):
         return self.dict()
+
+
 class SynchronizationRequest(BaseModel):
     ID: str
     user: str
 
+
 class SynchronizationAnswer(BaseModel):
     activities: List[Activity]
     IDs: List[str]
+
+
 class Elevationcheck(BaseModel):
     ID: str
     user: str
     elevationversion: bool
+
+
 class Elevationresponse(BaseModel):
     elevations: List[float]
     ID: str
+
+
 class Synccontrolanswer(BaseModel):
     elevations: List[Elevationresponse]
     msg: str
+
 
 # mongo connection
 connection_string = "mongodb+srv://user:user@cluster0.hbniblw.mongodb.net/?retryWrites=true&w=majority"
@@ -61,11 +71,11 @@ app = FastAPI()
 
 @app.get("/")
 def index():
-    return {"data": "MongoRepository service ran successfully -version 0.0.44"}
+    return {"data": "MongoRepository service ran successfully -version 0.0.45"}
 
 
 @app.post("/syncreq")
-async def syncreq(lis : List[SynchronizationRequest]):
+async def syncreq(lis: List[SynchronizationRequest]):
     docs = await returnAllUsersDocuments(lis[0].user)
     diffsend = []
     diffneed = []
@@ -75,9 +85,7 @@ async def syncreq(lis : List[SynchronizationRequest]):
     for li in lis:
         if not any(obj.ID == li.ID for obj in docs):
             diffneed.append(li.ID)
-    return SynchronizationAnswer(activities=diffsend,IDs=diffneed)
-
-
+    return SynchronizationAnswer(activities=diffsend, IDs=diffneed)
 
 
 @app.post("/newactivities")
@@ -89,7 +97,7 @@ async def newactivities(newac: List[Activity]):
         el = []
         for i in newA:
             el.append(i.altitude)
-        elevations.append(Elevationresponse(elevations=el,ID=e.ID))
+        elevations.append(Elevationresponse(elevations=el, ID=e.ID))
     await writeAll(newac)
     return elevations
 
@@ -117,12 +125,13 @@ async def synccheck(syncc: List[Elevationcheck], token: str):
                 for i in newA:
                     el.append(i.altitude)
                 els.append(Elevationresponse(elevations=el, ID=el.ID))
-        return Synccontrolanswer(elevations=els,msg="OK")
+        return Synccontrolanswer(elevations=els, msg="OK")
+
 
 @app.post("/delete")
 async def delete(deleteid: str, user: str):
     ans = await delete(deleteid)
-    return  ans
+    return ans
 
 
 async def returnAllUsersDocuments(user: str):
@@ -143,17 +152,19 @@ async def writeAll(activitys: List[Activity]):
         return "error"
 
 
-async def delete(ID : str):
+async def delete(ID: str):
     filters = {"ID": ID}
     try:
         delete = db["users"].delete_one(filters)
         return "done"
     except Exception as e:
         return "error"
-async def getElevation(lis:List[RoutePoints]):
+
+
+async def getElevation(lis: List[RoutePoints]):
     locations = []
     for li in lis:
-        locations.append(Location(latitude=li.latitude,longitude=li.longitude))
+        locations.append(Location(latitude=li.latitude, longitude=li.longitude))
     try:
         ans = req.post(elevation_api, data=locations)
     except Exception as e:
@@ -169,5 +180,7 @@ async def getElevation(lis:List[RoutePoints]):
             return lis
     except Exception as e:
         return "error"
+
+
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
