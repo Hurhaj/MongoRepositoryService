@@ -61,7 +61,7 @@ app = FastAPI()
 
 @app.get("/")
 def index():
-    return {"data": "MongoRepository service ran successfully -version 0.0.44"}
+    return {"data": "MongoRepository service ran successfully -version 0.0.48"}
 
 
 @app.post("/syncreq")
@@ -95,7 +95,7 @@ async def newactivities(newac: List[Activity]):
 
 
 @app.post("/synccheck")
-async def synccheck(syncc: List[Elevationcheck], token: str):
+async def synccheck(syncc: List[Elevationcheck]):
     docs = await returnAllUsersDocuments(syncc[0].user)
     if not docs == "error":
         els = []
