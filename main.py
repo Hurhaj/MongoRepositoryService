@@ -63,7 +63,7 @@ app = FastAPI()
 
 @app.get("/")
 def index():
-    return {"data": "MongoRepository service ran successfully -version 0.0.49"}
+    return {"data": "MongoRepository service ran successfully -version 0.0.50"}
 
 
 @app.post("/syncreq")
@@ -104,10 +104,10 @@ async def synccheck(syncc: List[Elevationcheck]):
     if not docs == "error":
         els = []
         for doc in docs:
-            if any(obj.ID == doc.ID for obj in syncc):
+            if not any(obj.ID == doc.ID for obj in syncc):
                 return "Fail"
         for li in syncc:
-            if any(obj.ID == li.ID for obj in docs):
+            if not any(obj.ID == li.ID for obj in docs):
                 return "Fail"
         for el in syncc:
             if not el.elevationversion:
