@@ -53,7 +53,7 @@ class Synccontrolanswer(BaseModel):
     msg: str
 
 # mongo connection
-connection_string = "mongodb+srv://user:<password>@cluster0.flqw178.mongodb.net/?retryWrites=true&w=majority"
+connection_string = "mongodb+srv://user:user@cluster0.flqw178.mongodb.net/?retryWrites=true&w=majority"
 client = MongoClient(connection_string)
 db = client["userdata"]
 elevation_api = "https://elevationmicroservice.azurewebsites.net/elevation"
