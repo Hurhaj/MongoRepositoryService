@@ -53,7 +53,7 @@ class Synccontrolanswer(BaseModel):
     msg: str
 
 # mongo connection
-connection_string = "mongodb+srv://user:user@cluster0.hbniblw.mongodb.net/?retryWrites=true&w=majority"
+connection_string = "mongodb+srv://user:<password>@cluster0.flqw178.mongodb.net/?retryWrites=true&w=majority"
 client = MongoClient(connection_string)
 db = client["userdata"]
 elevation_api = "https://elevationmicroservice.azurewebsites.net/elevation"
@@ -63,7 +63,7 @@ app = FastAPI()
 
 @app.get("/")
 def index():
-    return {"data": "MongoRepository service ran successfully -version 0.0.51"}
+    return {"data": "MongoRepository service ran successfully -version 0.0.52"}
 
 
 @app.post("/syncreq")
