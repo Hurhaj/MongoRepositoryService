@@ -63,15 +63,16 @@ app = FastAPI()
 
 @app.get("/")
 def index():
-    return {"data": "MongoRepository service ran successfully -version 0.0.50"}
+    return {"data": "MongoRepository service ran successfully -version 0.0.51"}
 
 
 @app.post("/syncreq")
 async def syncreq(lis : List[SynchronizationRequest]):
     docs = await returnAllUsersDocuments(lis[0].user)
-    print(docs)
     diffsend = []
     diffneed = []
+    if lis[0].ID == "none":
+        return SynchronizationAnswer(activities=docs, IDs=diffneed)
     for doc in docs:
         if not any(obj.ID == doc.ID for obj in lis):
             diffsend.append(doc)
