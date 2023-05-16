@@ -53,7 +53,7 @@ class Synccontrolanswer(BaseModel):
     msg: str
 
 # mongo connection
-connection_string = "mongodb+srv://user:user@cluster0.flqw178.mongodb.net/?retryWrites=true&w=majority"
+connection_string = "mongodb+srv://user:user@cluster0.hbniblw.mongodb.net/?retryWrites=true&w=majority"
 client = MongoClient(connection_string)
 db = client["userdata"]
 elevation_api = "https://elevationmicroservice.azurewebsites.net/elevation"
@@ -160,9 +160,12 @@ async def delete(ID : str):
     filters = {"ID": ID}
     try:
         delete = db["users"].delete_one(filters)
-        return "done"
+        if delete.deleted_count > 0:
+            return "done"
+        else:
+            return "error"
     except Exception as e:
-        return "error"
+        print(e)
 async def getElevation(lis:List[RoutePoints]):
     lys: List[RoutePoints]
     lys= lis
